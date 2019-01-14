@@ -25,7 +25,7 @@ public class Editor_AdvancedScriptableObject : Editor {
     private void OnEnable()
     {
         _aso = (AdvancedScriptableObject)target;
-        _parent = AdvancedScriptableObjectUtility.GetPrototype(_aso);
+        _parent = _aso.ProtoParent;
         _backupParent = _parent;
         ASOManager.Me.VaildateData();
         GetRelevantRefData();
@@ -58,7 +58,7 @@ public class Editor_AdvancedScriptableObject : Editor {
                 if (properties.name == "data")
                     continue;
 
-                System.Type type = AdvancedScriptableObjectUtility.GetSerPropType(properties);
+                System.Type type = AdvancedScriptableObjectUtility.GetSerializedPropertyType(properties);
                 //Debug.Log(type);
 
                 if (type != null)
@@ -273,7 +273,7 @@ public class Editor_AdvancedScriptableObject : Editor {
 
                     if (myProp.propertyType == SerializedPropertyType.ObjectReference)
                     {
-                        System.Type type = AdvancedScriptableObjectUtility.GetSerPropType(myProp);
+                        System.Type type = AdvancedScriptableObjectUtility.GetSerializedPropertyType(myProp);
                         if (type != null)
                         {
                             if (type.IsSubclassOf(typeof(AdvancedScriptableObject)))
@@ -302,7 +302,7 @@ public class Editor_AdvancedScriptableObject : Editor {
             {
                 if (myProp.name != "_protoChildren")
                 {
-                    System.Type type = AdvancedScriptableObjectUtility.GetSerPropType(myProp);
+                    System.Type type = AdvancedScriptableObjectUtility.GetSerializedPropertyType(myProp);
                     if (type != null)
                     {
                         if (type.GetElementType().IsSubclassOf(typeof(AdvancedScriptableObject)))
@@ -331,10 +331,11 @@ public class Editor_AdvancedScriptableObject : Editor {
         }
         else
         {
+            if (_backupParent != null && _backupParent.ProtoChildren.Contains(_aso))
+                _backupParent.ProtoChildren.Remove(_aso);
             _backupParent = _parent;
-            string guid = AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(_parent));
-            //Debug.Log(string.Format("Parent changed GUID:{0}",guid));
-            serializedObject.FindProperty("_protoParentGUID").stringValue = guid;
+            serializedObject.FindProperty("_protoParent").objectReferenceValue = _parent;
+
             _parent.ProtoChildren.Add(_aso);
         }
         serializedObject.ApplyModifiedProperties();
@@ -343,7 +344,7 @@ public class Editor_AdvancedScriptableObject : Editor {
 
     void BreakTieToParent()
     {
-        serializedObject.FindProperty("_protoParentGUID").stringValue = "";
+        serializedObject.FindProperty("_protoParent").objectReferenceValue = null;
 
         _parent.ProtoChildren.Remove(_aso);
         new SerializedObject(_parent).ApplyModifiedProperties();

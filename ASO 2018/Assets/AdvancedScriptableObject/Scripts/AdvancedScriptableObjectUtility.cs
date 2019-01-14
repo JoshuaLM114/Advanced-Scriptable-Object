@@ -474,28 +474,28 @@ public static class AdvancedScriptableObjectUtility {
 
     #region PrototypingTools
 
-    public static AdvancedScriptableObject GetPrototype(AdvancedScriptableObject child)
-    {
-        if (child == null)
-            return null;
-        string[] existing = AssetDatabase.FindAssets(string.Format("t:{0}", child.GetType().FullName));
-        //Debug.Log(string.Format("existing [{0}] count:{1}", child.GetType().FullName,existing.Length));
-        if(existing.Length > 0)
-            for (int i = 0; i < existing.Length; i++)
-            {
-                //Debug.Log(string.Format("checking [{0}] against [{1}]", existing[i],child.ProtoParentGUID));
-                if (existing[i] == child.ProtoParentGUID)
-                {
+    //public static AdvancedScriptableObject GetPrototype(AdvancedScriptableObject child)
+    //{
+    //    if (child == null)
+    //        return null;
+    //    string[] existing = AssetDatabase.FindAssets(string.Format("t:{0}", child.GetType().FullName));
+    //    //Debug.Log(string.Format("existing [{0}] count:{1}", child.GetType().FullName,existing.Length));
+    //    if(existing.Length > 0)
+    //        for (int i = 0; i < existing.Length; i++)
+    //        {
+    //            //Debug.Log(string.Format("checking [{0}] against [{1}]", existing[i],child.ProtoParentGUID));
+    //            if (existing[i] == child.ProtoParentGUID)
+    //            {
                 
-                    AdvancedScriptableObject found = AssetDatabase.LoadAssetAtPath(
-                        AssetDatabase.GUIDToAssetPath(existing[i]), 
-                        typeof(AdvancedScriptableObject)) as AdvancedScriptableObject;
-                    return found;
-                }
-            }
+    //                AdvancedScriptableObject found = AssetDatabase.LoadAssetAtPath(
+    //                    AssetDatabase.GUIDToAssetPath(existing[i]), 
+    //                    typeof(AdvancedScriptableObject)) as AdvancedScriptableObject;
+    //                return found;
+    //            }
+    //        }
         
-        return null;
-    }
+    //    return null;
+    //}
 
     public static void CloneData(AdvancedScriptableObject destObj, AdvancedScriptableObject from, AdvancedScriptableObject to)
     {
@@ -508,7 +508,7 @@ public static class AdvancedScriptableObjectUtility {
         {
             var curProp = properties[i];
 
-            if (curProp.Name == "_protoChildren")
+            if (BIsIgnoredField(curProp))
                 continue;
             //Debug.Log(string.Format("CurProp:{0}", curProp.Name));
 
@@ -586,7 +586,7 @@ public static class AdvancedScriptableObjectUtility {
                     #region Other Arrays
                     
                     Array fromList = curProp.GetValue(from) as Array;
-                    Array toList = curProp.GetValue(to) as Array;
+                    Array toList = Array.CreateInstance(curProp.FieldType.GetElementType(),fromList.Length);
                     Array.Copy(fromList, toList, fromList.Length);
                     curProp.SetValue(to, toList);
                     #endregion
@@ -594,7 +594,7 @@ public static class AdvancedScriptableObjectUtility {
                 #endregion
 
             }
-            else if (curProp.Name != "_protoParentGUID" && curProp.Name != "_parentAsset")
+            else
             {
                 #region Standard Properties
                 //Ensures value is not null
@@ -607,20 +607,17 @@ public static class AdvancedScriptableObjectUtility {
                     {
                         //Debug.Log("Setting as reference");
                         curProp.SetValue(to, valFrom);
-                        //new SerializedObject(to).ApplyModifiedProperties();
                     }
                     else
                     {
                         //If from var doesn't share asset with from object then set as reference
                         if (!BShareAsset(from, (AdvancedScriptableObject)valFrom))
                         {
-                            //Debug.Log(string.Format("Value does not share asset"));
                             curProp.SetValue(to, valFrom);
                             ASOManager.Me.AddReferenceData(to, (AdvancedScriptableObject)valFrom, curProp.Name);
                         }
                         else
                         {
-                            //Debug.Log(string.Format("Value shares asset"));
                             //Create a new object                            
                             var newObj = ScriptableObject.CreateInstance(curProp.FieldType) as AdvancedScriptableObject;
                             var asoFromVal = (AdvancedScriptableObject)valFrom;
@@ -636,12 +633,11 @@ public static class AdvancedScriptableObjectUtility {
                             AssetDatabase.ImportAsset(AssetDatabase.GetAssetPath(newObj));
 
                             curProp.SetValue(to, newObj);
-                            //new SerializedObject(to).ApplyModifiedProperties();
                             EditorUtility.SetDirty(destObj);
                             AssetDatabase.SaveAssets();
                             AssetDatabase.Refresh();
                             //copy the data from the other object
-                            CloneData(destObj, (AdvancedScriptableObject)valFrom, (AdvancedScriptableObject)newObj);
+                            CloneData(destObj, (AdvancedScriptableObject)valFrom, newObj);
                         }
                     }
                 }
@@ -649,10 +645,9 @@ public static class AdvancedScriptableObjectUtility {
             }
 
         }
-        //new SerializedObject(to).ApplyModifiedProperties();
+
         new SerializedObject(to).ApplyModifiedProperties();
         EditorUtility.SetDirty(to);
-        //AssetDatabase.DeleteAsset(copyAssetPath);
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
         //Debug.Log("--------COPYING FINISHED----------");
@@ -672,8 +667,6 @@ public static class AdvancedScriptableObjectUtility {
         for (int i = 0; i < properties.Length; i++)
         {
             var curProp = properties[i];
-
-            //Debug.Log(string.Format("Prop:[{0}]   val:[{1}]",curProp.Name,curProp.GetValue(aSObj)));
 
             if (curProp.Name == "_protoChildren")
                 continue;
@@ -706,13 +699,11 @@ public static class AdvancedScriptableObjectUtility {
                             newList.SetValue(null, x);
                         }
                         curProp.SetValue(aSObj, null);
-                        //curProp.SetValue(aSObj, list);
                     }
                     else
                     {
                         curProp.SetValue(aSObj, null);
                     }
-                    //curProp.SetValue(aSObj, Array.CreateInstance(elType, 0));
                 }
             }
             else
@@ -729,7 +720,6 @@ public static class AdvancedScriptableObjectUtility {
                     if (BShareAsset(aSObj, val))
                     {
                         Delete(aSObj, val);
-                        //Debug.Log("Destroying Object");
                         MonoBehaviour.DestroyImmediate(val, true);
                     }
                     else
@@ -774,11 +764,11 @@ public static class AdvancedScriptableObjectUtility {
 
     #endregion
 
-    public static System.Type GetSerPropType(SerializedProperty prop)
+    public static System.Type GetSerializedPropertyType(SerializedProperty prop)
     {
         Type parentType = prop.serializedObject.targetObject.GetType();
         bool bIsArrayElement;
-        //Debug.Log(string.Format("Type:{0} Path:{1}", parentType, prop.propertyPath));
+
         if (prop.propertyPath.Contains("["))
             bIsArrayElement = true;
         else
@@ -806,20 +796,13 @@ public static class AdvancedScriptableObjectUtility {
     public static void CopyASO(SerializedProperty toCopy)
     {
         if (ASOManager.Me == null)
-            Debug.Log("OH NO");
+            Debug.Log("ASO Manager not found");
         else if (toCopy == null)
-            Debug.Log("No property");
+            Debug.Log("No property to copy");
         else if (toCopy.objectReferenceValue == null)
-            Debug.Log("Property obj ref is null");
+            Debug.Log("Property object reference is null");
         ASOManager.Me.CopyBuffer = (AdvancedScriptableObject)toCopy.objectReferenceValue;
-
     }
-
-    //public static void CutASO(SerializedProperty from)
-    //{
-    //    ASOManager.Me.CopyBuffer = (AdvancedScriptableObject)from;
-    //    Delete(from.serializedObject.targetObject, from.objectReferenceValue);
-    //}
 
     public static void PasteASO(SerializedProperty pasteTo)
     {
@@ -867,9 +850,7 @@ public static class AdvancedScriptableObjectUtility {
             else
             {
                 //Get the array field
-                //Debug.Log(string.Format("Prop Name:{0}", toPasteTo.name));
                 field = parentType.GetField(GetArrayName(toPasteTo));
-                
                 type = field.FieldType.GetElementType();
             }
 
@@ -902,7 +883,7 @@ public static class AdvancedScriptableObjectUtility {
         for (int i = 0; i < properties.Length; i++)
         {
             var curProp = properties[i];
-
+            //Debug.Log(curProp.Name);
             if (curProp.FieldType.IsArray && curProp.FieldType.GetElementType().IsSubclassOf(typeof(AdvancedScriptableObject)))
             {
                 #region Handle Arrays
@@ -913,22 +894,12 @@ public static class AdvancedScriptableObjectUtility {
                         if (array.GetValue(x) != null)
                         {
                             AdvancedScriptableObject propASO = (AdvancedScriptableObject)array.GetValue(x);
-                            //if (propASO == null)
-                            //    Debug.Log("Array Element null");
                             if (!BShareAsset(toUpdate, propASO))
                             {
-                                //Debug.Log("Array element doesn't share asset");
                                 ASOManager.Me.AddReferenceData(toUpdate,propASO, curProp.Name,x);
-                                //var search = propASO.ReferencingASOs.Find(y => y.ReferencingASO == toUpdate);
-                                //if (search == null)
-                                //{
-                                //    Debug.Log(string.Format("PropName:{0}",curProp.Name));
-                                //    propASO.ReferencingASOs.Add(new ASOReferenceInfo(toUpdate, curProp.Name, x));
-                                //}
                             }
                             else
                             {
-                                //Debug.Log(string.Format("Entering {0}",propASO));
                                 //recursively enter to update child references.
                                 AddReferences(propASO);
                             }
@@ -938,6 +909,17 @@ public static class AdvancedScriptableObjectUtility {
             }
             else
             {
+                if (curProp.Name == "_protoParent")
+                {
+                    AdvancedScriptableObject parentASO = (AdvancedScriptableObject)curProp.GetValue(toUpdate);
+                    if (parentASO != null)
+                    {
+                        if(!parentASO.ProtoChildren.Contains(toUpdate))
+                            parentASO.ProtoChildren.Add(toUpdate);
+                    }
+                    continue;
+                }
+
                 //Skips over irrelevant types
                 if (!BRelevantType(curProp))
                     continue;
@@ -951,13 +933,9 @@ public static class AdvancedScriptableObjectUtility {
                     if (!BShareAsset(toUpdate, propASO))
                     {
                         ASOManager.Me.AddReferenceData(toUpdate, propASO, curProp.Name);
-                        //var search = propASO.ReferencingASOs.Find(x => x.ReferencingASO == toUpdate);
-                        //if (search == null)
-                        //    propASO.ReferencingASOs.Add(new ASOReferenceInfo(toUpdate, curProp.Name));
                     }
                     else
                     {
-                        //Debug.Log(string.Format("Entering {0}", propASO));
                         AddReferences(propASO);
                     }
                 }
@@ -976,13 +954,24 @@ public static class AdvancedScriptableObjectUtility {
         //Remove [i] index
         string trimmedName = baseName.Remove(baseName.Length - 3);
         trimmedName = trimmedName.Remove(trimmedName.Length - ".Array.data".Length);
-        //Debug.Log(string.Format("ArrayName:{0}",trimmedName));
+
         return trimmedName;
     }
 
     public static bool BWillCreateCircleReference(AdvancedScriptableObject mainAsset,AdvancedScriptableObject referenceAttempt)
     {       
         if (AssetDatabase.GetAssetPath(mainAsset) == AssetDatabase.GetAssetPath(referenceAttempt))
+            return true;
+        else
+            return false;
+    }
+
+    static bool BIsIgnoredField(FieldInfo field)
+    {
+
+        if (field.Name == "_protoChildren" 
+            || field.Name == "_protoParentGUID" ||
+            field.Name == "_parentAsset")
             return true;
         else
             return false;

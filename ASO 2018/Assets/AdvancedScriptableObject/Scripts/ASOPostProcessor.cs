@@ -13,7 +13,6 @@ public class ASOPostProcessor : AssetPostprocessor {
     {
         foreach (string str in importedAssets)
         {
-            //Debug.Log(str);
             Object obj = AssetDatabase.LoadAssetAtPath(str, typeof(Object));
             if (obj != null)
             {
@@ -26,11 +25,6 @@ public class ASOPostProcessor : AssetPostprocessor {
                 }
             }
         }
-        //foreach (string str in deletedAssets)
-        //{
-        //    Debug.Log("Deleted:" + str);
-
-        //}
     }
 
 }

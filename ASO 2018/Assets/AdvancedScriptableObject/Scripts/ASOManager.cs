@@ -45,7 +45,7 @@ public class ASOManager : ScriptableObject {
         }
     }
 
-    [SerializeField]
+    [SerializeField][HideInInspector]
     private List<ASOReferenceData> _referenceData = new List<ASOReferenceData>();
     //public List<ASOReferenceData> ReferenceData
     //{

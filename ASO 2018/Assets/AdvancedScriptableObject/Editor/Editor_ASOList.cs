@@ -72,7 +72,7 @@ public class Editor_ASOList : System.Object {
 
     void List_AddDropdown(Rect buttonRect,ReorderableList list)
     {
-        System.Type propType = AdvancedScriptableObjectUtility.GetSerPropType(_property).GetElementType();
+        System.Type propType = AdvancedScriptableObjectUtility.GetSerializedPropertyType(_property).GetElementType();
         System.Type[] types = Assembly.GetAssembly(propType).GetTypes();
 
         List<string> allTypes = (from System.Type t in types where t.IsSubclassOf(propType) select t.FullName).ToList();

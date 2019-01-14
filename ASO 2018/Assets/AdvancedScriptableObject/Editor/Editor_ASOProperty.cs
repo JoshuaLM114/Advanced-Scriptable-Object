@@ -67,12 +67,14 @@ public class Editor_ASOProperty : PropertyDrawer {
             {
                 if (AdvancedScriptableObjectUtility.BWillCreateCircleReference(parentASO, propertyASO))
                 {
-                    property.objectReferenceValue = null;
+                    AlterProperty(property, null);
                     Debug.LogError("Object reference will create circular reference. These are not supported.");
                 }
                 else
-                    ASOManager.Me.AddReferenceData(parentASO, propertyASO, property.name);
-                //aso.ReferencingASOs.Add(new ASOReferenceInfo(_aso, property.name));
+                {
+                    AlterProperty(property,(AdvancedScriptableObject)property.objectReferenceValue);
+                    AddReferenceData(property);
+                }
             }
 
             if (AdvancedScriptableObjectUtility.BCanPaste(property))
@@ -103,7 +105,6 @@ public class Editor_ASOProperty : PropertyDrawer {
     {
         EditorGUIUtility.PingObject(AssetDatabase.LoadMainAssetAtPath(AssetDatabase.GetAssetPath(property.objectReferenceValue)));
         Selection.activeObject = property.objectReferenceValue;
-
     }
 
     void AlterProperty(SerializedProperty property,AdvancedScriptableObject deltaASO)
@@ -204,9 +205,7 @@ public class Editor_ASOProperty : PropertyDrawer {
                 }
             }
             ASOManager.Me.AddReferenceData(parentASO, propertyASO, string.Format("{0}[{1}]",arrayName,arrayIndex));
-        }
-
-        
+        }      
     }
 
     void MergeMenu(SerializedProperty property)
@@ -293,7 +292,7 @@ public class Editor_ASOProperty : PropertyDrawer {
 
     void CreateNew(SerializedProperty property)
     {
-        System.Type type = AdvancedScriptableObjectUtility.GetSerPropType(property);
+        System.Type type = AdvancedScriptableObjectUtility.GetSerializedPropertyType(property);
         System.Type[] types = Assembly.GetAssembly(type).GetTypes();
 
         string[] allTypes = (from System.Type t in types where t.IsSubclassOf(type) select type.FullName).ToArray();

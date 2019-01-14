@@ -9,10 +9,10 @@ public class AdvancedScriptableObject : ScriptableObject {
 #if UNITY_EDITOR
     //used to maintain link to prototype parent
     [SerializeField][HideInInspector]
-    protected string _protoParentGUID;
-    public string ProtoParentGUID
+    protected AdvancedScriptableObject _protoParent;
+    public AdvancedScriptableObject ProtoParent
     {
-        get { return _protoParentGUID; }
+        get { return _protoParent; }
     }
     //used to maintain references to current prototype children
     [SerializeField]
