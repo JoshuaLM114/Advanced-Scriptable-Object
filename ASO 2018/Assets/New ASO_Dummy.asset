@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0dc7a9391a82bfa40932266689712887, type: 3}
+  m_Name: New ASO_Dummy
+  m_EditorClassIdentifier: 
+  _protoParent: {fileID: 0}
+  _protoChildren: []
+  _parentAsset: {fileID: 0}
+  dummyString: 
+  dummyFloat: 0
+  type2: {fileID: 0}
+  stringArray: []
+  arrayType:
+  - {fileID: 114671262643173390}
+  - {fileID: 114461313251058148}
+  mat: {fileID: 0}
+--- !u!114 &114461313251058148
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25d230fc7fbfd3c45a639e25a9c105b7, type: 3}
+  m_Name: ASO_Type3
+  m_EditorClassIdentifier: 
+  _protoParent: {fileID: 0}
+  _protoChildren: []
+  _parentAsset: {fileID: 11400000}
+  num: 0
+  intArray: 
+  dummy: {fileID: 0}
+  text: 
+  moreNumbers: 0
+--- !u!114 &114671262643173390
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3824a170d457575418bb834ed941e5a7, type: 3}
+  m_Name: ASO_Type2
+  m_EditorClassIdentifier: 
+  _protoParent: {fileID: 0}
+  _protoChildren: []
+  _parentAsset: {fileID: 11400000}
+  num: 0
+  intArray: 
+  dummy: {fileID: 0}

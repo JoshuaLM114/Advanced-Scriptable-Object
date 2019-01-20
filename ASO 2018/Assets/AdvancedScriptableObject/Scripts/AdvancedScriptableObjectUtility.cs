@@ -474,29 +474,6 @@ public static class AdvancedScriptableObjectUtility {
 
     #region PrototypingTools
 
-    //public static AdvancedScriptableObject GetPrototype(AdvancedScriptableObject child)
-    //{
-    //    if (child == null)
-    //        return null;
-    //    string[] existing = AssetDatabase.FindAssets(string.Format("t:{0}", child.GetType().FullName));
-    //    //Debug.Log(string.Format("existing [{0}] count:{1}", child.GetType().FullName,existing.Length));
-    //    if(existing.Length > 0)
-    //        for (int i = 0; i < existing.Length; i++)
-    //        {
-    //            //Debug.Log(string.Format("checking [{0}] against [{1}]", existing[i],child.ProtoParentGUID));
-    //            if (existing[i] == child.ProtoParentGUID)
-    //            {
-                
-    //                AdvancedScriptableObject found = AssetDatabase.LoadAssetAtPath(
-    //                    AssetDatabase.GUIDToAssetPath(existing[i]), 
-    //                    typeof(AdvancedScriptableObject)) as AdvancedScriptableObject;
-    //                return found;
-    //            }
-    //        }
-        
-    //    return null;
-    //}
-
     public static void CloneData(AdvancedScriptableObject destObj, AdvancedScriptableObject from, AdvancedScriptableObject to)
     {
         //Debug.Log("--------BEGIN COPYING----------");
@@ -668,7 +645,7 @@ public static class AdvancedScriptableObjectUtility {
         {
             var curProp = properties[i];
 
-            if (curProp.Name == "_protoChildren")
+            if (BIsIgnoredField(curProp))
                 continue;
 
             if (curProp.FieldType.IsArray)
