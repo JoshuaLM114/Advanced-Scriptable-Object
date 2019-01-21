@@ -500,8 +500,7 @@ public static class AdvancedScriptableObjectUtility {
                 {
                     #region ASO Array
                     Array fromList = curProp.GetValue(from) as Array;
-                    Array toList = curProp.GetValue(to) as Array;
-                    toList = Array.CreateInstance(elType, fromList.Length);
+                    Array toList = Array.CreateInstance(curProp.FieldType.GetElementType(), fromList.Length);
 
                     //Copy each element
                     for (int x = 0; x < fromList.Length; x++)
@@ -510,11 +509,10 @@ public static class AdvancedScriptableObjectUtility {
 
                         if (element != null)
                         {
+                            //if element is merged to the asset it's being copied from.
                             if (BShareAsset(from, element))
                             {
-                                //Debug.Log(string.Format("Instancing ASO:{0}", element));
-
-                                var newObj = ScriptableObject.CreateInstance(elType) as AdvancedScriptableObject;
+                                var newObj = ScriptableObject.CreateInstance(element.GetType()) as AdvancedScriptableObject;
 
                                 newObj.hideFlags = HideFlags.HideInHierarchy;
                                 newObj.name = element.name;
@@ -531,11 +529,12 @@ public static class AdvancedScriptableObjectUtility {
                                 AssetDatabase.SaveAssets();
                                 AssetDatabase.Refresh();
 
-                                toList.SetValue(newObj, x);
-                                new SerializedObject(to).ApplyModifiedProperties();
-
+                               
                                 //copy the data from the other object
                                 CloneData(destObj, element, newObj);
+                                toList.SetValue(newObj, x);
+                                new SerializedObject(to).ApplyModifiedProperties();
+                                Debug.Log(string.Format("New ARray val:{0}",toList.GetValue(x)));
                             }
                             else
                             {
@@ -545,8 +544,6 @@ public static class AdvancedScriptableObjectUtility {
                             }
                         }
                     }
-                    //Debug.Log("Setting array values");
-
                     //Array newArray = Array.ConvertAll(toList, x => (elType)x);
                     curProp.SetValue(to, toList);
 
@@ -596,8 +593,9 @@ public static class AdvancedScriptableObjectUtility {
                         else
                         {
                             //Create a new object                            
-                            var newObj = ScriptableObject.CreateInstance(curProp.FieldType) as AdvancedScriptableObject;
                             var asoFromVal = (AdvancedScriptableObject)valFrom;
+                            Debug.Log(string.Format("Type of element:{0}", asoFromVal.GetType()));
+                            var newObj = ScriptableObject.CreateInstance(asoFromVal.GetType()) as AdvancedScriptableObject;
                             newObj.hideFlags = HideFlags.HideInHierarchy;
                             newObj.name = asoFromVal.name;
 
@@ -651,7 +649,7 @@ public static class AdvancedScriptableObjectUtility {
             if (curProp.FieldType.IsArray)
             {
                 Array list = curProp.GetValue(aSObj) as Array;
-                if (list.Length > 0)
+                if (list != null && list.Length > 0)
                 {
                     Type elType = curProp.GetValue(aSObj).GetType().GetElementType();
 
@@ -830,8 +828,9 @@ public static class AdvancedScriptableObjectUtility {
                 field = parentType.GetField(GetArrayName(toPasteTo));
                 type = field.FieldType.GetElementType();
             }
-
-            if (ASOManager.Me.CopyBuffer.GetType() == type)
+            Type copyBufferType = ASOManager.Me.CopyBuffer.GetType();
+            if (copyBufferType == type ||
+                copyBufferType.IsSubclassOf(type))
                 return true;
             else
                 return false;

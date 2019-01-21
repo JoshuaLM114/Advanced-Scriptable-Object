@@ -10,61 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0dc7a9391a82bfa40932266689712887, type: 3}
-  m_Name: New ASO_Dummy
+  m_Name: New ASO_Dummy 1
   m_EditorClassIdentifier: 
-  _protoParent: {fileID: 11400000}
-  _protoChildren:
-  - {fileID: 11400000, guid: 1dfa868e237be294facd8b993f8068b0, type: 2}
+  _protoParent: {fileID: 11400000, guid: d821887fc30e285469516aaa613742b2, type: 2}
+  _protoChildren: []
   _parentAsset: {fileID: 0}
   dummyString: 
   dummyFloat: 0
-  type2: {fileID: 114577119114610334}
+  type2: {fileID: 114109297375111894}
   stringArray: []
   arrayType:
-  - {fileID: 114188035781337402}
-  - {fileID: 114268984986574894}
+  - {fileID: 114771010971090676}
+  - {fileID: 114380696247640838}
   mat: {fileID: 0}
---- !u!114 &114188035781337402
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 25d230fc7fbfd3c45a639e25a9c105b7, type: 3}
-  m_Name: ASO_Type3
-  m_EditorClassIdentifier: 
-  _protoParent: {fileID: 0}
-  _protoChildren: []
-  _parentAsset: {fileID: 11400000}
-  num: 0
-  intArray: 
-  dummy: {fileID: 0}
-  text: 
-  moreNumbers: 0
---- !u!114 &114268984986574894
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 25d230fc7fbfd3c45a639e25a9c105b7, type: 3}
-  m_Name: ASO_Type3
-  m_EditorClassIdentifier: 
-  _protoParent: {fileID: 0}
-  _protoChildren: []
-  _parentAsset: {fileID: 11400000}
-  num: 0
-  intArray: 
-  dummy: {fileID: 0}
-  text: 
-  moreNumbers: 0
---- !u!114 &114577119114610334
+--- !u!114 &114109297375111894
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
@@ -82,3 +41,43 @@ MonoBehaviour:
   num: 0
   intArray: 
   dummy: {fileID: 0}
+--- !u!114 &114380696247640838
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25d230fc7fbfd3c45a639e25a9c105b7, type: 3}
+  m_Name: ASO_Type3
+  m_EditorClassIdentifier: 
+  _protoParent: {fileID: 0}
+  _protoChildren: []
+  _parentAsset: {fileID: 11400000}
+  num: 0
+  intArray: 
+  dummy: {fileID: 0}
+  text: 
+  moreNumbers: 0
+--- !u!114 &114771010971090676
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25d230fc7fbfd3c45a639e25a9c105b7, type: 3}
+  m_Name: ASO_Type3
+  m_EditorClassIdentifier: 
+  _protoParent: {fileID: 0}
+  _protoChildren: []
+  _parentAsset: {fileID: 11400000}
+  num: 0
+  intArray: 
+  dummy: {fileID: 0}
+  text: 
+  moreNumbers: 0

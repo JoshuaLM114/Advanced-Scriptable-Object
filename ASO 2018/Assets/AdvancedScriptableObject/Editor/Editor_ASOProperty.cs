@@ -292,21 +292,19 @@ public class Editor_ASOProperty : PropertyDrawer {
 
     void CreateNew(SerializedProperty property)
     {
-        System.Type type = AdvancedScriptableObjectUtility.GetSerializedPropertyType(property);
-        System.Type[] types = Assembly.GetAssembly(type).GetTypes();
+        System.Type propType;
+        propType = AdvancedScriptableObjectUtility.GetSerializedPropertyType(property);
+        System.Type[] types = Assembly.GetAssembly(propType).GetTypes();
 
-        string[] allTypes = (from System.Type t in types where t.IsSubclassOf(type) select type.FullName).ToArray();
-        if (!type.IsAbstract)
+        List<string> allTypes = (from System.Type t in types where t.IsSubclassOf(propType) select t.FullName).ToList();
+        if (!propType.IsAbstract)
         {
-            List<string> list = allTypes.ToList();
-            list.Add(type.FullName);
-            allTypes = list.ToArray();
+            allTypes.Add(propType.FullName);
         }
-
 
         var menu = new GenericMenu();
 
-        for (int i = 0; i < allTypes.Length; i++)
+        for (int i = 0; i < allTypes.Count; i++)
         {
             GUIContent gc = new GUIContent(allTypes[i]);
             menu.AddItem(gc, false, CreateObjectSelected, new ObjectSelection(property, allTypes[i]));
